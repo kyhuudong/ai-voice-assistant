@@ -6,15 +6,13 @@ on:
       - "backend/**"
     branches:
       - feat/video-cicd-ecs
-permissions:
-  id-token: write
-  contents: read
+
 env:
   # Setting an environment variable with the value of a configuration variable
-  ECR_BACKEND_IMAGE: ${{ vars.ECR_BACKEND_IMAGE }}
-  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
-  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-  ECS_BACKEND_SERVICE: ${{ vars.ECS_BACKEND_SERVICE }}
+  ECR_BACKEND_IMAGE: ${{ env.ECR_BACKEND_IMAGE }}
+  AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+  ECS_CLUSTER: ${{ env.ECS_CLUSTER }}
+  ECS_BACKEND_SERVICE: ${{ env.ECS_BACKEND_SERVICE }}
 
 jobs:
   deploy:
