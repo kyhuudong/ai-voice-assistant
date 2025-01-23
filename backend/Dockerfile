@@ -4,14 +4,20 @@ FROM python:3.8-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install FFmpeg
+# Install FFmpeg and other dependencies
 RUN apt-get update && \
-    apt-get install -y ffmpeg
+    apt-get install -y --no-install-recommends \
+    ffmpeg \
+    curl \
+    unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-
-# Install aws cli
-RUN apt-get install -y awscli
-
+# Install AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip ./aws
 
 # Copy the current directory contents into the container at /app
 COPY . /app
