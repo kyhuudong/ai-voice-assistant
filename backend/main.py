@@ -17,8 +17,6 @@ origins = [
     "*"
 ]
 
-app.include_router(AssistantAudioController, tags=['assistant'])
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
