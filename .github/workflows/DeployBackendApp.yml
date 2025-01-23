@@ -7,8 +7,6 @@ on:
     branches:
       - feat/video-cicd-ecs
 
-
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -29,12 +27,11 @@ jobs:
           echo "ECS_BACKEND_SERVICE=${{ vars.ECS_BACKEND_SERVICE }}"
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up QEMU for arm64
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-        if: runner.os == 'Linux'
 
       - name: Set up Docker for arm64
         uses: docker/setup-qemu-action@v2
@@ -49,7 +46,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
 
       - name: Login to Amazon ECR
         run: |
@@ -60,13 +57,15 @@ jobs:
           cd backend
           docker buildx create --use
           docker buildx inspect --bootstrap
-          docker buildx build --platform linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
+          docker buildx build --platform linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_DEFAULT_REGION }}.amazonaws.com/${{ vars.ECR_BACKEND_IMAGE }}:latest --push .
 
       - name: Deploy to ECS
-        uses: imehedi/actions-awscli-v2@latest
-        with:
-          args: ecs update-service --cluster AiVoiceAssistantCluster --service AiVoiceAssistantBackend --force-new-deployment
+        run: |
+          aws ecs update-service \
+            --cluster ${{ vars.ECS_CLUSTER }} \
+            --service ${{ vars.ECS_BACKEND_SERVICE }} \
+            --force-new-deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "us-west-2"
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
