@@ -7,6 +7,10 @@ setup_app_config()
 
 app = FastAPI()
 
+@app.get("get")
+def root_route():
+    return { "message": "Hello World" }
+
 origins = [
     "http://localhost",
     "http://localhost:3000",
