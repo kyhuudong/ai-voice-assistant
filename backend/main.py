@@ -9,7 +9,7 @@ app = FastAPI()
 
 @app.get("get")
 def root_route():
-    return { "message": "Hello World vx3" }
+    return { "message": "Hello World v3" }
 
 origins = [
     "http://localhost",
