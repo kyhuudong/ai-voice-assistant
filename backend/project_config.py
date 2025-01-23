@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 
 def setup_openai_config():
     import openai
-    openai.api_key = os.getenv('OPENAI_API_KEY')
-    openai.organization = os.getenv('OPENAI_ORG_ID')
+    openai.api_key = '123'
+    openai.organization = '456'
 
 
 def setup_app_config():
