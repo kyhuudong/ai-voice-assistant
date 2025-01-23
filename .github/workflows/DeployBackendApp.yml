@@ -7,18 +7,27 @@ on:
     branches:
       - feat/video-cicd-ecs
 
-env:
-  # Setting an environment variable with the value of a configuration variable
-  ECR_BACKEND_IMAGE: ${{ env.ECR_BACKEND_IMAGE }}
-  AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
-  ECS_CLUSTER: ${{ env.ECS_CLUSTER }}
-  ECS_BACKEND_SERVICE: ${{ env.ECS_BACKEND_SERVICE }}
+
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: prod # Specify the environment here
+    env:
+      # Setting an environment variable with the value of a configuration variable
+      ECR_BACKEND_IMAGE: ${{ vars.ECR_BACKEND_IMAGE }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+      ECS_BACKEND_SERVICE: ${{ vars.ECS_BACKEND_SERVICE }}
 
     steps:
+      - name: Debug Environment Variables
+        run: |
+          echo "ECR_BACKEND_IMAGE=${{ vars.ECR_BACKEND_IMAGE }}"
+          echo "AWS_DEFAULT_REGION=${{ vars.AWS_DEFAULT_REGION }}"
+          echo "ECS_CLUSTER=${{ vars.ECS_CLUSTER }}"
+          echo "ECS_BACKEND_SERVICE=${{ vars.ECS_BACKEND_SERVICE }}"
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
